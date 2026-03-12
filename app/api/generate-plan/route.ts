@@ -174,8 +174,8 @@ function generateMockPlan(
         : 'Eat mindfully and chew food thoroughly. Avoid skipping meals. Include a variety of colorful vegetables. Limit processed and packaged foods.',
     },
     ai_insights: nlInput
-      ? `I noticed you prefer ${nlInput.slice(0, 60)}... Your plan has been tailored accordingly with ${region} regional foods that align with your preferences while supporting your health goals. The meals are designed to be both culturally familiar and nutritionally optimized.`
-      : `Your personalized ${region} diet plan has been crafted to align with your health profile and cultural food preferences. Each meal choice is optimized for your specific needs.`,
+      ? `I've thoughtfully analyzed your request mentioning "${nlInput}". Based on that, I've completely personalized your ${region} diet plan. The recommended meals harmonize your specific taste preferences with your health requirements, ensuring everything is deeply familiar yet nutritionally optimized.`
+      : `Your personalized ${region} diet plan has been scientifically crafted to align precisely with your health profile and cultural food preferences. Each meal choice is optimized for your specific metabolic needs.`,
   };
   void statusMap; // suppress unused warning
 }
