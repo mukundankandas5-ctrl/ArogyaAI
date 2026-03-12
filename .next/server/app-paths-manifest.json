@@ -1,0 +1,9 @@
+{
+  "/page": "app/page.js",
+  "/generate/page": "app/generate/page.js",
+  "/api/generate-plan/route": "app/api/generate-plan/route.js",
+  "/api/save-plan/route": "app/api/save-plan/route.js",
+  "/saved/page": "app/saved/page.js",
+  "/about/page": "app/about/page.js",
+  "/api/get-plans/route": "app/api/get-plans/route.js"
+}

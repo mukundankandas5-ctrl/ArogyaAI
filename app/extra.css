@@ -1,0 +1,17 @@
+/* Spin animation for loading spinners */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Ensure md: breakpoint shows desktop nav */
+@media (min-width: 768px) {
+  .hidden.md\:flex { display: flex !important; }
+  .hidden.md\:block { display: block !important; }
+  .md\:hidden { display: none !important; }
+  .lg\:block { display: block !important; }
+}
+
+/* Result card animation */
+#plan-result {
+  animation: slideUp 0.6s ease-out forwards;
+}
