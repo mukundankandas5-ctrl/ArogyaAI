@@ -33,7 +33,7 @@ export async function signup(formData: FormData) {
   });
 
   if (error) {
-    return redirect('/login?message=Could not create user');
+    return redirect(`/login?message=${encodeURIComponent(error.message)}`);
   }
 
   revalidatePath('/', 'layout');
