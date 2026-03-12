@@ -1,22 +1,11 @@
 -- ArogyaAI Database Schema
 -- Run this in the Supabase SQL Editor for project: gmvlsbywpezlwshudwfo
 
--- Users table
-CREATE TABLE IF NOT EXISTS users (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name TEXT NOT NULL,
-  age INTEGER,
-  weight DECIMAL(5,2),
-  height DECIMAL(5,2),
-  region TEXT,
-  diet_preference TEXT,
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
-
+-- We no longer need a custom users table because we use Supabase Auth.
 -- Generated Plans table
 CREATE TABLE IF NOT EXISTS generated_plans (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
   user_name TEXT,
   health_score INTEGER,
   health_status TEXT,
@@ -30,12 +19,23 @@ CREATE TABLE IF NOT EXISTS generated_plans (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Enable Row Level Security (RLS) - allow public read/write for prototype
-ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+-- Enable Row Level Security (RLS) - Secure for Authenticated Users
 ALTER TABLE generated_plans ENABLE ROW LEVEL SECURITY;
 
--- Allow public access for prototype demo
-CREATE POLICY "Allow public insert on users" ON users FOR INSERT WITH CHECK (true);
-CREATE POLICY "Allow public select on users" ON users FOR SELECT USING (true);
-CREATE POLICY "Allow public insert on generated_plans" ON generated_plans FOR INSERT WITH CHECK (true);
-CREATE POLICY "Allow public select on generated_plans" ON generated_plans FOR SELECT USING (true);
+-- Allow users to insert their own plans
+CREATE POLICY "Users can insert their own plans" 
+ON generated_plans FOR INSERT 
+TO authenticated 
+WITH CHECK (auth.uid() = user_id);
+
+-- Allow users to view their own plans
+CREATE POLICY "Users can view their own plans" 
+ON generated_plans FOR SELECT 
+TO authenticated 
+USING (auth.uid() = user_id);
+
+-- Allow users to delete their own plans (optional but good practice)
+CREATE POLICY "Users can delete their own plans" 
+ON generated_plans FOR DELETE 
+TO authenticated 
+USING (auth.uid() = user_id);

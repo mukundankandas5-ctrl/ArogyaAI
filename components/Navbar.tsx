@@ -2,7 +2,9 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { createClient } from '@/utils/supabase/client';
+import { logout } from '@/app/login/actions';
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -14,6 +16,14 @@ const navLinks = [
 export default function Navbar() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user);
+    });
+  }, [pathname]);
 
   return (
     <nav style={{
@@ -59,11 +69,25 @@ export default function Navbar() {
             ))}
           </div>
 
-          {/* CTA */}
-          <div className="hidden md:block">
-            <Link href="/generate" className="btn-primary" style={{ padding: '10px 20px', fontSize: 14 }}>
-              ✨ Get My Plan
-            </Link>
+          {/* CTA / Auth */}
+          <div className="hidden md:flex alignItems-center gap-4">
+            {user && (
+               <Link href="/generate" className="btn-primary" style={{ padding: '10px 20px', fontSize: 14 }}>
+                 ✨ Get My Plan
+               </Link>
+            )}
+            
+            {user ? (
+              <form action={logout}>
+                <button type="submit" className="btn-secondary" style={{ padding: '8px 16px', fontSize: 13, borderRadius: 8 }}>
+                  Sign Out
+                </button>
+              </form>
+            ) : (
+              <Link href="/login" className="btn-primary" style={{ padding: '10px 20px', fontSize: 14 }}>
+                Sign In
+              </Link>
+            )}
           </div>
 
           {/* Mobile menu toggle */}
@@ -99,6 +123,19 @@ export default function Navbar() {
               }}
             >{link.label}</Link>
           ))}
+          <div style={{ marginTop: 16 }}>
+             {user ? (
+              <form action={logout}>
+                <button type="submit" className="btn-secondary" style={{ width: '100%', padding: '12px', fontSize: 16, borderRadius: 8 }}>
+                  Sign Out
+                </button>
+              </form>
+            ) : (
+              <Link href="/login" className="btn-primary" style={{ display: 'block', textAlign: 'center', padding: '12px', fontSize: 16, borderRadius: 8 }}>
+                Sign In
+              </Link>
+            )}
+          </div>
         </div>
       )}
     </nav>

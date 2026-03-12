@@ -1,32 +1,23 @@
-import { supabase } from '@/lib/supabase';
+import { createClient } from '@/utils/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
   try {
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    }
+
     const body = await req.json();
     const { userProfile, plan } = body;
 
-    // First insert user profile
-    const { data: userData, error: userError } = await supabase
-      .from('users')
-      .insert([{
-        name: userProfile.name,
-        age: userProfile.age,
-        weight: userProfile.weight,
-        height: userProfile.height,
-        region: userProfile.region,
-        diet_preference: userProfile.dietPreference,
-      }])
-      .select()
-      .single();
-
-    if (userError) throw userError;
-
-    // Then save generated plan
+    // Save generated plan associated with the auth user
     const { data: planData, error: planError } = await supabase
       .from('generated_plans')
       .insert([{
-        user_id: userData.id,
+        user_id: user.id,
         user_name: userProfile.name,
         health_score: plan.health_score,
         diet_plan: plan.diet_plan,

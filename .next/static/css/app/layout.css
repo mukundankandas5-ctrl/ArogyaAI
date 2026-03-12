@@ -544,6 +544,9 @@ video {
 .resize{
   resize: both;
 }
+.gap-4{
+  gap: 1rem;
+}
 .border{
   border-width: 1px;
 }
